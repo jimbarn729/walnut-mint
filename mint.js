@@ -3,7 +3,7 @@ const CANDY_MACHINE_ID = '4Z4VH9UVMSEHqZJRqutQcAStkiBXFKeeSdbr2DjKAy9o';
 const RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
 // ----------------------------------
 
-// Ждём загрузки всех библиотек
+// Ждём загрузки библиотек
 (async function() {
     await new Promise((resolve) => {
         const check = () => {
