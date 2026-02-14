@@ -1,47 +1,329 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>🥜 Walnut Emotions – Connect Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥜 Mint Walnut Emotions</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f5f2e6; }
-        .card { max-width: 400px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        button { background: #8b5a2b; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 5px; cursor: pointer; }
-        #status { margin-top: 20px; font-weight: bold; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #2b1e0f 0%, #4a3620 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 2px #8b5a2b inset;
+            padding: 30px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #5d3a1a;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .sub {
+            color: #7e5a3a;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #c4a484;
+            padding-bottom: 15px;
+        }
+        .emoji {
+            font-size: 5rem;
+            filter: drop-shadow(0 8px 6px rgba(0,0,0,0.2));
+            margin-bottom: 10px;
+        }
+        .price-box {
+            background: #f5e7d9;
+            border-radius: 60px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border: 1px solid #b99e7c;
+        }
+        .price-label { color: #5d3a1a; }
+        .price-value { 
+            background: #8b5a2b; 
+            color: white; 
+            padding: 8px 20px; 
+            border-radius: 40px;
+            font-size: 1.3rem;
+        }
+        .limit {
+            background: #e8d9cc;
+            border-radius: 40px;
+            padding: 12px;
+            margin-bottom: 25px;
+            color: #2c1b0b;
+            font-weight: 500;
+        }
+        .bonus {
+            background: #d4b48c;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #2c1b0b;
+            border: 2px solid #a67c52;
+        }
+        .wallet-status {
+            background: #d1e0d1;
+            border-radius: 30px;
+            padding: 10px 15px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            word-break: break-word;
+            border: 1px solid #6b8e6b;
+        }
+        button {
+            background: #8b5a2b;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 18px 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 0 #5d3a1a;
+            margin-bottom: 15px;
+        }
+        button:hover:not(:disabled) {
+            background: #a6743c;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 0 #5d3a1a;
+        }
+        button:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #5d3a1a;
+        }
+        button:disabled {
+            background: #b3a18f;
+            box-shadow: 0 8px 0 #7e6b59;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .info {
+            color: #3d2b18;
+            background: #f0e1d0;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            border: 1px solid #b99e7c;
+        }
+        a {
+            color: #8b5a2b;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        a:hover { text-decoration: underline; }
+        .footer { margin-top: 25px; font-size: 0.85rem; color: #7a5d40; }
     </style>
+    <!-- Используем стабильный CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.91.1/lib/index.iife.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi@0.9.1/dist/umi.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi-bundle-defaults@0.9.1/dist/umi-bundle-defaults.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi-signer-wallet-adapters@0.9.1/dist/umi-signer-wallet-adapters.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/mpl-candy-machine@6.0.1/dist/mpl-candy-machine.umd.min.js"></script>
 </head>
 <body>
     <div class="card">
-        <h1>🥜 Walnut Emotions</h1>
-        <p>Тест подключения кошелька</p>
-        <button id="connectBtn">Connect Wallet</button>
-        <div id="status">Не подключён</div>
-        <p><small>Mint price: 0.1 SOL (будет доступен после подключения)</small></p>
+        <h1>🥜 WALNUT EMOTIONS</h1>
+        <div class="sub">30 unique walnuts · each with a feeling</div>
+        <div class="emoji">🌰✨</div>
+
+        <div class="price-box">
+            <span class="price-label">💎 Mint price</span>
+            <span class="price-value">0.1 SOL</span>
+        </div>
+
+        <div class="limit">
+            ⚡ Max 3 per wallet · Bot tax 0.01 SOL
+        </div>
+
+        <div class="bonus">
+            🎁 <strong>BONUS:</strong> Mint 3 and get a <strong>GOLDEN WALNUT</strong> airdropped FREE!
+        </div>
+
+        <div class="wallet-status" id="walletStatus">
+            🔘 Wallet not connected
+        </div>
+
+        <button id="mintButton">🔌 Connect Wallet</button>
+
+        <div class="info" id="mintInfo">
+            🕒 Mint starts <strong>February 14, 2026 · 22:00 UTC</strong><br>
+            (check your local time)
+        </div>
+
+        <div class="footer">
+            ⚡ Powered by Solana · Candy Machine v3<br>
+            <a href="https://x.com/arturbarn?s=21" target="_blank">🐦 Twitter</a>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.91.1/lib/index.iife.min.js"></script>
     <script>
-        const connectBtn = document.getElementById('connectBtn');
-        const statusDiv = document.getElementById('status');
-        let provider;
+        (async function() {
+            // ---------- КОНФИГУРАЦИЯ ----------
+            const CANDY_MACHINE_ID = '4Z4VH9UVMSEHqZJRqutQcAStkiBXFKeeSdbr2DjKAy9o';
+            const RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+            // ----------------------------------
 
-        connectBtn.addEventListener('click', async () => {
-            try {
-                if (!window.phantom?.solana) {
-                    statusDiv.innerText = '❌ Phantom не установлен';
-                    return;
-                }
-                provider = window.phantom.solana;
-                statusDiv.innerText = '⏳ Запрос подключения...';
-                await provider.connect();
-                const publicKey = provider.publicKey.toString();
-                statusDiv.innerHTML = `✅ Подключён: ${publicKey.slice(0,4)}...${publicKey.slice(-4)}`;
-                connectBtn.innerText = 'Connected';
-                connectBtn.disabled = true;
-            } catch (err) {
-                console.error(err);
-                statusDiv.innerText = '❌ Ошибка подключения';
+            // Ждём загрузки всех библиотек
+            await new Promise((resolve) => {
+                const check = () => {
+                    if (window.umiBundleDefaults && window.umi && window.umiSignerWalletAdapters && window.mplCandyMachine) {
+                        resolve();
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
+            });
+
+            // DOM элементы
+            const mintButton = document.getElementById('mintButton');
+            const walletStatus = document.getElementById('walletStatus');
+            const mintInfo = document.getElementById('mintInfo');
+
+            let umi = null;
+            let candyMachine = null;
+            let wallet = null;
+
+            // Проверка наличия Phantom
+            const provider = window?.phantom?.solana;
+
+            if (!provider?.isPhantom) {
+                walletStatus.innerHTML = '❌ Phantom wallet not found. Please install <a href="https://phantom.app/" target="_blank">Phantom</a>.';
+                mintButton.disabled = true;
+                mintButton.innerText = 'Phantom required';
+            } else {
+                // Функция подключения кошелька (вызывается по клику)
+                window.connectWallet = async function() {
+                    try {
+                        if (!provider.publicKey) {
+                            await provider.connect();
+                        }
+                        const walletPublicKey = provider.publicKey.toString();
+                        wallet = provider.publicKey;
+
+                        // Создаём UMI instance с адаптером
+                        const umiInstance = umiBundleDefaults.createUmi(RPC_ENDPOINT)
+                            .use(mplCandyMachine.mplCandyMachine());
+                        
+                        const walletAdapter = {
+                            publicKey: provider.publicKey,
+                            signMessage: provider.signMessage,
+                            signTransaction: provider.signTransaction,
+                            signAllTransactions: provider.signAllTransactions,
+                        };
+                        umi = umiInstance.use(umiSignerWalletAdapters.walletAdapterIdentity(walletAdapter));
+
+                        walletStatus.innerHTML = `✅ Connected: <strong>${walletPublicKey.slice(0,4)}...${walletPublicKey.slice(-4)}</strong>`;
+                        mintButton.innerText = '🥜 Mint Random Walnut';
+                        mintButton.disabled = false;
+
+                        // Загружаем информацию о Candy Machine
+                        try {
+                            const candyMachinePublicKey = umi.publicKey(CANDY_MACHINE_ID);
+                            candyMachine = await mplCandyMachine.fetchCandyMachine(umi, candyMachinePublicKey);
+                            const itemsMinted = Number(candyMachine.itemsRedeemed);
+                            const itemsAvailable = Number(candyMachine.data.itemsAvailable);
+                            mintInfo.innerHTML = `📊 Minted: <strong>${itemsMinted} / ${itemsAvailable}</strong> · Price: 0.1 SOL + fees`;
+                        } catch (e) {
+                            console.warn('Could not fetch candy machine stats', e);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        walletStatus.innerHTML = '❌ Connection failed. Please try again.';
+                    }
+                };
+
+                // Функция минта
+                window.mintNft = async function() {
+                    if (!umi || !wallet) {
+                        await window.connectWallet();
+                        if (!umi) return;
+                    }
+
+                    mintButton.disabled = true;
+                    mintButton.innerText = '⏳ Minting...';
+                    mintInfo.innerText = 'Processing transaction...';
+
+                    try {
+                        const candyMachinePublicKey = umi.publicKey(CANDY_MACHINE_ID);
+                        
+                        // Получаем свежие данные CM
+                        candyMachine = await mplCandyMachine.fetchCandyMachine(umi, candyMachinePublicKey);
+                        
+                        // Проверяем, не превышен ли лимит
+                        if (candyMachine.itemsRedeemed >= candyMachine.data.itemsAvailable) {
+                            throw new Error('Collection sold out!');
+                        }
+
+                        // Минтим
+                        const mintBuilder = await mplCandyMachine.mintV2(umi, {
+                            candyMachine: candyMachinePublicKey,
+                            collectionMint: candyMachine.collectionMint,
+                            collectionUpdateAuthority: candyMachine.authority,
+                            mintArgs: {
+                                solPayment: umi.some({}),
+                                mintLimit: umi.some({ id: 1 }),
+                                botTax: umi.some({ lamports: 10000000 }), // 0.01 SOL
+                            }
+                        }).buildAndSign(umi);
+
+                        const signature = await umi.rpc.sendTransaction(mintBuilder, {
+                            commitment: 'confirmed',
+                        });
+
+                        mintInfo.innerHTML = `✅ Mint successful!<br>Signature: <a href="https://solscan.io/tx/${signature}" target="_blank">${signature.slice(0,8)}...${signature.slice(-8)}</a><br>⏳ It may take a moment to appear in your wallet.`;
+                        
+                        // Обновим статистику
+                        candyMachine = await mplCandyMachine.fetchCandyMachine(umi, candyMachinePublicKey);
+                        const itemsMinted = Number(candyMachine.itemsRedeemed);
+                        const itemsAvailable = Number(candyMachine.data.itemsAvailable);
+                        mintInfo.innerHTML += `<br>📊 Minted: ${itemsMinted} / ${itemsAvailable}`;
+
+                    } catch (err) {
+                        console.error('Mint error:', err);
+                        mintInfo.innerHTML = `❌ Error: ${err.message || 'Unknown error'}`;
+                    } finally {
+                        mintButton.disabled = false;
+                        mintButton.innerText = '🥜 Mint Random Walnut';
+                    }
+                };
+
+                // Привязываем события: клик по кнопке вызывает подключение или минт
+                mintButton.addEventListener('click', async () => {
+                    if (!umi) {
+                        await window.connectWallet();
+                    } else {
+                        await window.mintNft();
+                    }
+                });
+
+                // Кнопка изначально активна для подключения
+                mintButton.innerText = '🔌 Connect Wallet';
+                mintButton.disabled = false;
             }
-        });
+        })();
     </script>
 </body>
 </html>
