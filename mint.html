@@ -143,6 +143,12 @@
         a:hover { text-decoration: underline; }
         .footer { margin-top: 25px; font-size: 0.85rem; color: #7a5d40; }
     </style>
+    <!-- Используем стабильный CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.91.1/lib/index.iife.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi@0.9.1/dist/umi.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi-bundle-defaults@0.9.1/dist/umi-bundle-defaults.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi-signer-wallet-adapters@0.9.1/dist/umi-signer-wallet-adapters.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@metaplex-foundation/mpl-candy-machine@6.0.1/dist/mpl-candy-machine.umd.min.js"></script>
 </head>
 <body>
     <div class="card">
@@ -180,20 +186,24 @@
         </div>
     </div>
 
-    <!-- Solana and Metaplex libraries -->
-    <script src="https://unpkg.com/@solana/web3.js@1.91.1/lib/index.iife.min.js"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/umi@0.9.1/dist/umi.umd.min.js"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/umi-bundle-defaults@0.9.1/dist/umi-bundle-defaults.umd.min.js"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/umi-signer-wallet-adapters@0.9.1/dist/umi-signer-wallet-adapters.umd.min.js"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/mpl-candy-machine@6.0.1/dist/mpl-candy-machine.umd.min.js"></script>
-
     <script>
         (async function() {
-            // ---------- CONFIGURATION (проверьте и измените при необходимости) ----------
+            // ---------- КОНФИГУРАЦИЯ ----------
             const CANDY_MACHINE_ID = '4Z4VH9UVMSEHqZJRqutQcAStkiBXFKeeSdbr2DjKAy9o';
             const RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
-            const COLLECTION_TWITTER = 'https://x.com/arturbarn?s=21';
-            // --------------------------------------------------------------------------
+            // ----------------------------------
+
+            // Ждём загрузки всех библиотек
+            await new Promise((resolve) => {
+                const check = () => {
+                    if (window.umiBundleDefaults && window.umi && window.umiSignerWalletAdapters && window.mplCandyMachine) {
+                        resolve();
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
+            });
 
             // DOM элементы
             const mintButton = document.getElementById('mintButton');
@@ -212,13 +222,6 @@
                 mintButton.disabled = true;
                 mintButton.innerText = 'Phantom required';
             } else {
-                // Создаём UMI instance
-                const connection = new solanaWeb3.Connection(RPC_ENDPOINT, 'confirmed');
-                const umiInstance = umiBundleDefaults.createUmi(RPC_ENDPOINT)
-                    .use(mplCandyMachine.mplCandyMachine());
-
-                window.umi = umiInstance;
-
                 // Функция подключения кошелька
                 window.connectWallet = async function() {
                     try {
@@ -228,7 +231,10 @@
                         const walletPublicKey = provider.publicKey.toString();
                         wallet = provider.publicKey;
 
-                        // Подключаем адаптер
+                        // Создаём UMI instance с адаптером
+                        const umiInstance = umiBundleDefaults.createUmi(RPC_ENDPOINT)
+                            .use(mplCandyMachine.mplCandyMachine());
+                        
                         const walletAdapter = {
                             publicKey: provider.publicKey,
                             signMessage: provider.signMessage,
@@ -243,7 +249,7 @@
 
                         // Загружаем информацию о Candy Machine
                         try {
-                            const candyMachinePublicKey = umiPublicKeys.publicKey(CANDY_MACHINE_ID);
+                            const candyMachinePublicKey = umi.publicKey(CANDY_MACHINE_ID);
                             candyMachine = await mplCandyMachine.fetchCandyMachine(umi, candyMachinePublicKey);
                             const itemsMinted = Number(candyMachine.itemsRedeemed);
                             const itemsAvailable = Number(candyMachine.data.itemsAvailable);
@@ -269,7 +275,7 @@
                     mintInfo.innerText = 'Processing transaction...';
 
                     try {
-                        const candyMachinePublicKey = umiPublicKeys.publicKey(CANDY_MACHINE_ID);
+                        const candyMachinePublicKey = umi.publicKey(CANDY_MACHINE_ID);
                         
                         // Получаем свежие данные CM
                         candyMachine = await mplCandyMachine.fetchCandyMachine(umi, candyMachinePublicKey);
@@ -285,9 +291,9 @@
                             collectionMint: candyMachine.collectionMint,
                             collectionUpdateAuthority: candyMachine.authority,
                             mintArgs: {
-                                solPayment: umiSome({}),
-                                mintLimit: umiSome({ id: 1 }),
-                                botTax: umiSome({ lamports: umiAmount('sol', 0.01) }),
+                                solPayment: umi.some({}),
+                                mintLimit: umi.some({ id: 1 }),
+                                botTax: umi.some({ lamports: 10000000 }), // 0.01 SOL
                             }
                         }).buildAndSign(umi);
 
